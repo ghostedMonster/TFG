@@ -43,6 +43,18 @@ def main():
     print('Lote del Jugador 4: {}'.format(g.player_4.lot))
     print('Lote del Jugador 5: {}'.format(g.player_5.lot))
 
+    g.elegir_estrategia(g.player_1)
+    g.elegir_estrategia(g.player_2)
+    g.elegir_estrategia(g.player_3)
+    g.elegir_estrategia(g.player_4)
+    g.elegir_estrategia(g.player_5)
+
+    print('Estrategia del Jugador 1: {}'.format(g.player_1.election))
+    print('Estrategia del Jugador 2: {}'.format(g.player_2.election))
+    print('Estrategia del Jugador 3: {}'.format(g.player_3.election))
+    print('Estrategia del Jugador 4: {}'.format(g.player_4.election))
+    print('Estrategia del Jugador 5: {}'.format(g.player_5.election))
+
 
 if __name__ == "__main__":
     main()

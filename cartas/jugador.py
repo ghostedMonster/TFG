@@ -3,3 +3,4 @@ class Player:
         self.won = []
         self.lot = []
         self.points = 0
+        self.election = ""
