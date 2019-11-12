@@ -109,35 +109,35 @@ class Juego:
         :return: Un string con la decisión que se ha tenido al final.
         """
         player_lot = player.lot
-        contador_corazones = 0
-        contador_rombos = 0
-        contador_picas = 0
-        contador_treboles = 0
-        contador_sin_palo = 0
-        contador_miseria = 0
+        c_corazones = 0
+        c_rombos = 0
+        c_picas = 0
+        c_treboles = 0
+        c_sin_palo = 0
+        c_miseria = 0
 
         for i in range(0, len(player_lot)):
             if "C" in player_lot[i]:
-                contador_corazones += 1
+                c_corazones += 1
             if "R" in player_lot[i]:
-                contador_rombos += 1
+                c_rombos += 1
             if "P" in player_lot[i]:
-                contador_picas += 1
+                c_picas += 1
             if "T" in player_lot[i]:
-                contador_treboles += 1
+                c_treboles += 1
 
             numero_carta_array = [int(s) for s in player_lot[i] if s.isdigit()]
             numero_carta = (numero_carta_array[0] * 10) + numero_carta_array[1]
 
             if numero_carta >= 10:
-                contador_sin_palo += 1
+                c_sin_palo += 1
             if i != 0 and i % 2 != 0 and numero_carta < 10 and \
                     [int(s) for s in player_lot[i - 1] if s.isdigit()][0] < 10:
-                contador_miseria += 1
+                c_miseria += 1
 
-        suma_todo = contador_miseria + contador_sin_palo + contador_treboles + contador_picas + contador_rombos + contador_corazones
-        array_probabilidad = [contador_corazones/suma_todo, contador_rombos/suma_todo, contador_picas/suma_todo,
-                              contador_treboles/suma_todo, contador_sin_palo/suma_todo, contador_miseria/suma_todo]
+        suma_todo = c_miseria + c_sin_palo + c_treboles + c_picas + c_rombos + c_corazones
+        array_probabilidad = [c_corazones/suma_todo, c_rombos/suma_todo, c_picas/suma_todo, c_treboles/suma_todo,
+                              c_sin_palo/suma_todo, c_miseria/suma_todo]
         election = choice(["C", "R", "P", "T", "S", "M"], 1, p=array_probabilidad)
         player.election = election
         return election
@@ -150,3 +150,30 @@ class Juego:
         :return: la baraja dada ordenada.
         """
         return baraja.sort()
+
+    def is_valid(self, carta, jugador):
+        """
+        Define cuales son las jugadas permitidas para un jugador. En esencia, cada jugador podrá poner cualquier carta
+        que tenga en su mano n juego.
+        :param carta: Carta en juego
+        :param jugador: Jugador que quiere poner en juego la carta
+        :return: Un boolean diciendo si se puede poner o no la carta en juego
+        """
+        if carta in jugador.lot:
+            return True
+        else:
+            return False
+
+    def is_end(self):
+        """
+        Con esta funcion vemos si hemos terminado de jugar. Para que una partida haya terminado, se necesita que todos
+        los usuarios hayan hechado todas sus cartas, a la vez que en la sección de cartas jugadas no quede ninguna,
+        significando que todas las cartas han sido jugadas y todos han ganado todas sus cartas.
+        :return:
+        """
+        if len(self.player_1.lot) == 0 and len(self.player_2.lot) == 0 and len(self.player_3.lot) == 0 and \
+                len(self.player_4.lot) == 0 and len(self.player_5.lot) == 0:
+            if len(self.jugadas) == 0:
+                return True
+        else:
+            return False

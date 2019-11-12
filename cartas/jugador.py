@@ -1,4 +1,8 @@
+
 class Player:
+    """
+    Jugador del juego de cartas. \n
+    """
     def __init__(self):
         self.won = []
         self.lot = []
