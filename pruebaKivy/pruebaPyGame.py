@@ -18,7 +18,7 @@ images = []
 grande_carta = (175, 250)
 
 for palo in range(0, 4):
-    for numero in range(0, 13):
+    for numero in range(1, 14):
         numero_real = numero + 1
         if palo == 0:
             if numero_real < 10:

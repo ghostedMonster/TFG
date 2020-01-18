@@ -1,4 +1,7 @@
+import cartas.jugador as player
+
 
 class Carta:
-    name = ""
-    image = ""
+    def __init__(self):
+        self.name = ""
+        self.image = ""

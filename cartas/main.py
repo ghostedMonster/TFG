@@ -1,8 +1,11 @@
-from cartas.juego import Juego
+import cartas.game as juego
 
 
 def main():
-    g = Juego()
+    """
+    funcion principal para la aplicacion
+    """
+    g = juego.Game()
     print('Baraja: {}'.format(g.baraja))
     print('Jugadas: {}'.format(g.jugadas))
     print('Ganadas por el Jugador 1: {}'.format(g.player_1.won))
@@ -31,11 +34,11 @@ def main():
 
     print('Ordenamos los lotes de los jugadores: ')
 
-    g.ordenar(g.player_1.lot)
-    g.ordenar(g.player_2.lot)
-    g.ordenar(g.player_3.lot)
-    g.ordenar(g.player_4.lot)
-    g.ordenar(g.player_5.lot)
+    juego.order(g.player_1.lot)
+    juego.order(g.player_2.lot)
+    juego.order(g.player_3.lot)
+    juego.order(g.player_4.lot)
+    juego.order(g.player_5.lot)
 
     print('Lote del Jugador 1: {}'.format(g.player_1.lot))
     print('Lote del Jugador 2: {}'.format(g.player_2.lot))
@@ -43,11 +46,11 @@ def main():
     print('Lote del Jugador 4: {}'.format(g.player_4.lot))
     print('Lote del Jugador 5: {}'.format(g.player_5.lot))
 
-    g.elegir_estrategia(g.player_1)
-    g.elegir_estrategia(g.player_2)
-    g.elegir_estrategia(g.player_3)
-    g.elegir_estrategia(g.player_4)
-    g.elegir_estrategia(g.player_5)
+    juego.elige_estrategia(g.player_1)
+    juego.elige_estrategia(g.player_2)
+    juego.elige_estrategia(g.player_3)
+    juego.elige_estrategia(g.player_4)
+    juego.elige_estrategia(g.player_5)
 
     print('Estrategia del Jugador 1: {}'.format(g.player_1.election))
     print('Estrategia del Jugador 2: {}'.format(g.player_2.election))
