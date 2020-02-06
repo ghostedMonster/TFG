@@ -264,6 +264,8 @@ class Game:
 
         self.players = [self.player_1, self.player_2, self.player_3, self.player_4, self.player_5]
 
+        self.turn = 0
+
     def barajar(self):
         """
         Baraja las cartas

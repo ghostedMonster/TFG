@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://images/background.jpg" type="Texture" id=1]
+[ext_resource path="res://scenes/Player.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scripts/Game.gd" type="Script" id=3]
+
+[node name="Game" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="background" type="Sprite" parent="."]
+position = Vector2( 611.968, 412.821 )
+texture = ExtResource( 1 )
+
+[node name="Player1" parent="." instance=ExtResource( 2 )]
+position = Vector2( 335.202, 466.048 )
+
+[node name="Player2" parent="." instance=ExtResource( 2 )]
+position = Vector2( 14.7018, 248.461 )
+
+[node name="Player3" parent="." instance=ExtResource( 2 )]
+position = Vector2( 66.1583, 26.4633 )
+
+[node name="Player4" parent="." instance=ExtResource( 2 )]
+position = Vector2( 566.021, 38.2248 )
+
+[node name="Player5" parent="." instance=ExtResource( 2 )]
+position = Vector2( 692.457, 241.11 )
