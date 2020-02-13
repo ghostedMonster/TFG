@@ -3,7 +3,7 @@ from anarquia.suit import Suit
 
 
 class Card(object):
-    def __init__(self, suit, rank, in_deck = False, image = None):
+    def __init__(self, suit, rank, in_deck=False, image=None):
         if rank in Rank and suit in Suit:
             self.rank = rank
             self.suit = suit

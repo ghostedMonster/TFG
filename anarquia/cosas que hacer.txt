@@ -1,0 +1,4 @@
+Definir min
+Definir play
+Definir cuando acaba y comienza un nuevo turno
+Añadir cartas si todavia hay en la baraja por turno
