@@ -1,7 +1,7 @@
 from anarquia.choice import Choice
 from anarquia.deck import Deck
 from anarquia.player import Player
-
+from anarquia.suit import Suit
 
 value_suits = [2, 1, 0]
 
@@ -118,7 +118,7 @@ def get_points(player):
 
     strategy = player.choice.name
 
-    for card in player.hand:
+    for card in player.won_hand:
         if strategy == card.suit.name:
             points += 2
         if strategy == 'NO_SUIT':
@@ -137,6 +137,7 @@ class MiniMax(object):
         self.deck = deck
         self.players = players
         self.played_cards = []
+        self.turn = 0
 
     def is_end(self):
         """
@@ -168,7 +169,7 @@ class MiniMax(object):
             if player.score == max_score:
                 winner = player
 
-        return winner
+        return winner.score,
 
     def number_of_player(self, player):
         """
@@ -182,24 +183,132 @@ class MiniMax(object):
                 res = i
         return res
 
-    def play(self, player, card):
+    def play(self, player, card_number):
         """
         Juega la carta elegida del jugador elegido
+        @param card_number: Numero de la carta a jugar
         @param player: Jugador elegido
-        @param card: Carta elegida
         """
-        pass
+        card = player.hand[card_number]
+        if card in player.hand:
+            card.owner = player
+            card.turn = self.turn
+            self.played_cards.append(card)
+            player.hand.remove(card)
+
+    def undo(self, player, card, position):
+        """
+        Deshace la jugada hecha por el jugador
+        @param position: Posición en la que estaba la carta
+        @param card: Carta que quieres que vuelva a la mano
+        @param player: Jugador a realizar el deshecho
+        """
+        for i in self.players:
+            for j in i.won_hand:
+                if j.owner == player and j == card:
+                    i.won_hand.remove(card)
+                    player.hand.insert(position, card)
+
+    def max(self, player):
+        """
+        Función max del algoritmo minimax
+        @param player: Jugador que usará la función de max
+        @return:
+        """
+        end = self.is_end()
+
+        number_of_player = self.number_of_player(player)
+
+        next_number_of_player = number_of_player + 1
+
+        if next_number_of_player == 1:
+            self.turn += 1
+            max_card_hearts = None
+            max_card_diamonds = None
+            max_card_spades = None
+            max_card_clubs = None
+            for card in self.played_cards:
+                for card_2 in self.played_cards:
+                    if card.suit == card_2.suit:
+                        if card.suit == Suit.HEARTS:
+                            if max_card_hearts is None:
+                                max_card_hearts = card
+                            if card.rank.value > card_2.rank.value:
+                                max_card_hearts = card
+                        elif card.suit == Suit.DIAMONDS:
+                            if max_card_diamonds is None:
+                                max_card_diamonds = card
+                            if card.rank.value > card_2.rank.value:
+                                max_card_diamonds = card
+                        elif card.suit == Suit.SPADES:
+                            if max_card_spades is None:
+                                max_card_spades = card
+                            if card.rank.value > card_2.rank.value:
+                                max_card_spades = card
+                        elif card.suit == Suit.CLUBS:
+                            if max_card_clubs is None:
+                                max_card_clubs = card
+                            if card.rank.value > card_2.rank.value:
+                                max_card_clubs = card
+
+            for card in self.played_cards:
+                if max_card_hearts is not None:
+                    if card.suit == max_card_hearts.suit:
+                        new_owner = max_card_hearts.owner
+                        card.won_by = new_owner
+                        new_owner.won_hand.append(card)
+                if max_card_diamonds is not None:
+                    if card.suit == max_card_diamonds.suit:
+                        new_owner = max_card_diamonds.owner
+                        card.won_by = new_owner
+                        new_owner.won_hand.append(card)
+                if max_card_spades is not None:
+                    if card.suit == max_card_spades.suit:
+                        new_owner = max_card_spades.owner
+                        card.won_by = new_owner
+                        new_owner.won_hand.append(card)
+                if max_card_clubs is not None:
+                    if card.suit == max_card_clubs.suit:
+                        new_owner = max_card_clubs.owner
+                        card.won_by = new_owner
+                        new_owner.won_hand.append(card)
+            self.played_cards = []
 
 
+        if next_number_of_player == len(self.players):
+            next_number_of_player = 0
+
+        points = get_points(player)
+        p_card = None
+        max_points = 0
+
+        if end:
+            return points, -1
+
+        for card in range(0, len(player.hand)):
+            all_card = player.hand[card]
+            self.play(player, card)
+            if self.players[next_number_of_player].computer:
+                points, p_card = self.max(self.players[next_number_of_player])
+            else:
+                points, p_card = self.min(self.players[next_number_of_player])
+
+            if points > max_points:
+                max_points = points
+                p_card = all_card.position_hand
+
+            self.undo(player, all_card, card)
+
+
+        print("En la posicion " + str(p_card) + ' consigues ' + str(max_points) + ' puntos')
+        return max_points, p_card
 
     def min(self, player):
         """
-        Función min del algoritmo minimax.  
-        @param player:
+        Función min del algoritmo minimax
+        @param player: Jugador que hará la función de min
+        @return: Puntos recibidos máximos que te darán, si juegas la carta que está en la posición que también devolvemos
         """
-        pass
-
-    def max(self, player):
         end = self.is_end()
 
         number_of_player = self.number_of_player(player)
@@ -207,22 +316,64 @@ class MiniMax(object):
         next_number_of_player = number_of_player + 1
         if next_number_of_player == len(self.players):
             next_number_of_player = 0
+            self.turn += 1
+            max_card_hearts = None
+            max_card_diamonds = None
+            max_card_spades = None
+            max_card_clubs = None
+            for card in self.played_cards:
+                for card_2 in self.played_cards:
+                    if card.suit == card_2.suit and card.suit == Suit.HEARTS and card.rank.value > card_2.rank.value:
+                        max_card_hearts = card
+                    if card.suit == card_2.suit and card.suit == Suit.DIAMONDS and card.rank.value > card_2.rank.value:
+                        max_card_hearts = card
+                    if card.suit == card_2.suit and card.suit == Suit.SPADES and card.rank.value > card_2.rank.value:
+                        max_card_hearts = card
+                    if card.suit == card_2.suit and card.suit == Suit.CLUBS and card.rank.value > card_2.rank.value:
+                        max_card_hearts = card
 
+            max_card_hearts.owner.won_hand.append(max_card_hearts)
+            max_card_diamonds.owner.won_hand.append(max_card_diamonds)
+            max_card_spades.owner.won_hand.append(max_card_spades)
+            max_card_clubs.owner.won_hand.append(max_card_clubs)
 
+            for card in self.played_cards:
+                if card.suit == max_card_hearts.suit:
+                    new_owner = max_card_hearts.owner
+                    card.won_by = new_owner
+                    new_owner.won_hand.append(card)
+                if card.suit == max_card_diamonds.suit:
+                    new_owner = max_card_hearts.owner
+                    card.won_by = new_owner
+                    new_owner.won_hand.append(card)
+                if card.suit == max_card_spades.suit:
+                    new_owner = max_card_hearts.owner
+                    card.won_by = new_owner
+                    new_owner.won_hand.append(card)
+                if card.suit == max_card_clubs.suit:
+                    new_owner = max_card_hearts.owner
+                    card.won_by = new_owner
+                    new_owner.won_hand.append(card)
 
         points = get_points(player)
-
-        max_points = 0
+        p_card = None
+        max_points = 1000
 
         if end:
-            return self.winner()
+            return points, -1
 
-        for card in player.hand:
-            self.play(card, player)
+        for card in range(0, len(player.hand)):
+            all_card = player.hand[card]
+            self.play(player, card)
             if self.players[next_number_of_player].computer:
-                points = self.max(self.players[next_number_of_player])
+                points, p_card = self.max(self.players[next_number_of_player])
             else:
-                self.min(self.players[next_number_of_player])
+                points, p_card = self.min(self.players[next_number_of_player])
+            if points < max_points:
+                max_points = points
+                p_card = card
 
-        return points
+            self.undo(player, all_card, card)
 
+
+        return points, p_card

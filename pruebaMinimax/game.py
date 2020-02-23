@@ -203,7 +203,7 @@ class Game:
                     self.current_state[i][j] = '.'
 
                     if minv <= alpha:
-                        return  minv, qx, qy
+                        return minv, qx, qy
 
                     if minv > beta:
                         beta = minv

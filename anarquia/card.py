@@ -19,6 +19,11 @@ class Card(object):
         self.horizontal_dimension = None
         self.vertical_dimension = None
 
+        self.owner = None
+        self.turn = 0
+        self.won_by = None
+        self.position_hand = 0
+
     def __str__(self):
         return str(self.rank.name) + " " + str(self.suit.name)
 
