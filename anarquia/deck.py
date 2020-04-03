@@ -1,9 +1,9 @@
 from itertools import product
 from random import shuffle
 
-from anarquia.card import Card
-from anarquia.rank import Rank
-from anarquia.suit import Suit
+from card import Card
+from rank import Rank
+from suit import Suit
 
 
 class Deck(object):

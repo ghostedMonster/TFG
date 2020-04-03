@@ -1,7 +1,9 @@
-from anarquia.choice import Choice
-from anarquia.deck import Deck
-from anarquia.player import Player
-from anarquia.suit import Suit
+import numpy
+
+from choice import Choice
+from deck import Deck
+from player import Player
+from suit import Suit
 
 value_suits = [2, 1, 0]
 
@@ -169,7 +171,7 @@ class MiniMax(object):
             if player.score == max_score:
                 winner = player
 
-        return winner.score,
+        return winner.score
 
     def number_of_player(self, player):
         """
@@ -196,7 +198,7 @@ class MiniMax(object):
             self.played_cards.append(card)
             player.hand.remove(card)
 
-    def undo(self, player, card, position):
+    def undo(self, player, card):
         """
         Deshace la jugada hecha por el jugador
         @param position: Posición en la que estaba la carta
@@ -205,175 +207,172 @@ class MiniMax(object):
         """
         for i in self.players:
             for j in i.won_hand:
-                if j.owner == player and j == card:
-                    i.won_hand.remove(card)
-                    player.hand.insert(position, card)
+                if j.owner == player:
+                    if j.turn == card.turn:
+                        card_to_remove = j
+                        i.won_hand.remove(card_to_remove)
+                        player.hand.append(card_to_remove)
+                        player.hand.sort()
 
-    def max(self, player):
-        """
-        Función max del algoritmo minimax
-        @param player: Jugador que usará la función de max
-        @return:
-        """
-        end = self.is_end()
+    def get_max_card_each_suit(self):
+        max_card_hearts = None
+        max_card_diamonds = None
+        max_card_spades = None
+        max_card_clubs = None
+        for card in self.played_cards:
+            for card_2 in self.played_cards:
+                if card.suit == card_2.suit:
+                    if card.suit == Suit.HEARTS:
+                        if max_card_hearts is None:
+                            max_card_hearts = card
+                        if card.rank.value > card_2.rank.value:
+                            max_card_hearts = card
+                    elif card.suit == Suit.DIAMONDS:
+                        if max_card_diamonds is None:
+                            max_card_diamonds = card
+                        if card.rank.value > card_2.rank.value:
+                            max_card_diamonds = card
+                    elif card.suit == Suit.SPADES:
+                        if max_card_spades is None:
+                            max_card_spades = card
+                        if card.rank.value > card_2.rank.value:
+                            max_card_spades = card
+                    elif card.suit == Suit.CLUBS:
+                        if max_card_clubs is None:
+                            max_card_clubs = card
+                        if card.rank.value > card_2.rank.value:
+                            max_card_clubs = card
+        return max_card_hearts, max_card_diamonds, max_card_clubs, max_card_spades
 
-        number_of_player = self.number_of_player(player)
-
-        next_number_of_player = number_of_player + 1
-
-        if next_number_of_player == 1:
-            self.turn += 1
-            max_card_hearts = None
-            max_card_diamonds = None
-            max_card_spades = None
-            max_card_clubs = None
-            for card in self.played_cards:
-                for card_2 in self.played_cards:
-                    if card.suit == card_2.suit:
-                        if card.suit == Suit.HEARTS:
-                            if max_card_hearts is None:
-                                max_card_hearts = card
-                            if card.rank.value > card_2.rank.value:
-                                max_card_hearts = card
-                        elif card.suit == Suit.DIAMONDS:
-                            if max_card_diamonds is None:
-                                max_card_diamonds = card
-                            if card.rank.value > card_2.rank.value:
-                                max_card_diamonds = card
-                        elif card.suit == Suit.SPADES:
-                            if max_card_spades is None:
-                                max_card_spades = card
-                            if card.rank.value > card_2.rank.value:
-                                max_card_spades = card
-                        elif card.suit == Suit.CLUBS:
-                            if max_card_clubs is None:
-                                max_card_clubs = card
-                            if card.rank.value > card_2.rank.value:
-                                max_card_clubs = card
-
-            for card in self.played_cards:
-                if max_card_hearts is not None:
-                    if card.suit == max_card_hearts.suit:
-                        new_owner = max_card_hearts.owner
-                        card.won_by = new_owner
-                        new_owner.won_hand.append(card)
-                if max_card_diamonds is not None:
-                    if card.suit == max_card_diamonds.suit:
-                        new_owner = max_card_diamonds.owner
-                        card.won_by = new_owner
-                        new_owner.won_hand.append(card)
-                if max_card_spades is not None:
-                    if card.suit == max_card_spades.suit:
-                        new_owner = max_card_spades.owner
-                        card.won_by = new_owner
-                        new_owner.won_hand.append(card)
-                if max_card_clubs is not None:
-                    if card.suit == max_card_clubs.suit:
-                        new_owner = max_card_clubs.owner
-                        card.won_by = new_owner
-                        new_owner.won_hand.append(card)
-            self.played_cards = []
-
-
-        if next_number_of_player == len(self.players):
-            next_number_of_player = 0
-
-        points = get_points(player)
-        p_card = None
-        max_points = 0
-
-        if end:
-            return points, -1
-
-        for card in range(0, len(player.hand)):
-            all_card = player.hand[card]
-            self.play(player, card)
-            if self.players[next_number_of_player].computer:
-                points, p_card = self.max(self.players[next_number_of_player])
-            else:
-                points, p_card = self.min(self.players[next_number_of_player])
-
-            if points > max_points:
-                max_points = points
-                p_card = all_card.position_hand
-
-            self.undo(player, all_card, card)
-
-
-        print("En la posicion " + str(p_card) + ' consigues ' + str(max_points) + ' puntos')
-        return max_points, p_card
-
-    def min(self, player):
-        """
-        Función min del algoritmo minimax
-        @param player: Jugador que hará la función de min
-        @return: Puntos recibidos máximos que te darán, si juegas la carta que está en la posición que también devolvemos
-        """
-        end = self.is_end()
-
-        number_of_player = self.number_of_player(player)
-
-        next_number_of_player = number_of_player + 1
-        if next_number_of_player == len(self.players):
-            next_number_of_player = 0
-            self.turn += 1
-            max_card_hearts = None
-            max_card_diamonds = None
-            max_card_spades = None
-            max_card_clubs = None
-            for card in self.played_cards:
-                for card_2 in self.played_cards:
-                    if card.suit == card_2.suit and card.suit == Suit.HEARTS and card.rank.value > card_2.rank.value:
-                        max_card_hearts = card
-                    if card.suit == card_2.suit and card.suit == Suit.DIAMONDS and card.rank.value > card_2.rank.value:
-                        max_card_hearts = card
-                    if card.suit == card_2.suit and card.suit == Suit.SPADES and card.rank.value > card_2.rank.value:
-                        max_card_hearts = card
-                    if card.suit == card_2.suit and card.suit == Suit.CLUBS and card.rank.value > card_2.rank.value:
-                        max_card_hearts = card
-
-            max_card_hearts.owner.won_hand.append(max_card_hearts)
-            max_card_diamonds.owner.won_hand.append(max_card_diamonds)
-            max_card_spades.owner.won_hand.append(max_card_spades)
-            max_card_clubs.owner.won_hand.append(max_card_clubs)
-
-            for card in self.played_cards:
+    def put_won_cards_in_its_place(self, max_card_hearts, max_card_diamonds, max_card_clubs, max_card_spades):
+        for card in self.played_cards:
+            if max_card_hearts is not None:
                 if card.suit == max_card_hearts.suit:
                     new_owner = max_card_hearts.owner
                     card.won_by = new_owner
                     new_owner.won_hand.append(card)
+            if max_card_diamonds is not None:
                 if card.suit == max_card_diamonds.suit:
-                    new_owner = max_card_hearts.owner
+                    new_owner = max_card_diamonds.owner
                     card.won_by = new_owner
                     new_owner.won_hand.append(card)
+            if max_card_spades is not None:
                 if card.suit == max_card_spades.suit:
-                    new_owner = max_card_hearts.owner
+                    new_owner = max_card_spades.owner
                     card.won_by = new_owner
                     new_owner.won_hand.append(card)
+            if max_card_clubs is not None:
                 if card.suit == max_card_clubs.suit:
-                    new_owner = max_card_hearts.owner
+                    new_owner = max_card_clubs.owner
                     card.won_by = new_owner
                     new_owner.won_hand.append(card)
+        self.played_cards = []
 
-        points = get_points(player)
-        p_card = None
-        max_points = 1000
+    def is_finish(self):
+        res = []
+        count = 0
+        for player in self.players:
+            if len(player.hand) == 0:
+                count += 1
+        if count == len(self.players):
+            for player in self.players:
+                res.append(get_points(player))
+            return res
+        else:
+            return res
+
+    def getPlayedCards(self):
+        res = []
+        for player in self.players:
+            for card in player.won_hand:
+                res.append(card)
+        return res
+
+    def finished(self, player, played_cards, objective):
+        res = False
+        check = 0
+        for player in self.players:
+            if len(player.hand) == 0:
+                check += 1
+        if check == len(self.players):
+            res = True
+        elif played_cards >= 10 - objective:
+            res = True
+
+        return res
+
+    def max_levels(self, player, objective):
+        played_cards = self.getPlayedCards()
+        max_cards = [-1, -1, -1, -1, -1]
+        max_position = [-1, -1, -1, -1, -1]
+
+        number_player = self.number_of_player(player)
+        next_number_of_player = number_player + 1
+
+        if next_number_of_player == len(self.players):
+            next_number_of_player = 0
+
+        if next_number_of_player == 1:
+            self.turn += 1
+
+            max_card_hearts, max_card_diamonds, max_card_clubs, max_card_spades = self.get_max_card_each_suit()
+            self.put_won_cards_in_its_place(max_card_hearts, max_card_diamonds, max_card_clubs, max_card_spades)
+
+        number_played_cards = 10 - len(self.players[number_player].hand)
+
+        end = self.finished(number_player, number_played_cards, objective)
 
         if end:
-            return points, -1
+            return [get_points(self.players[0]), get_points(self.players[1]), get_points(self.players[2]),
+                    get_points(self.players[3]), get_points(self.players[4])], [-1, -1, -1, -1, -1]
 
         for card in range(0, len(player.hand)):
             all_card = player.hand[card]
             self.play(player, card)
-            if self.players[next_number_of_player].computer:
-                points, p_card = self.max(self.players[next_number_of_player])
-            else:
-                points, p_card = self.min(self.players[next_number_of_player])
-            if points < max_points:
-                max_points = points
-                p_card = card
+            points, position = self.max_levels(self.players[next_number_of_player], objective)
+            for i in range(0, len(self.players)):
+                if points[i] > max_cards[i]:
+                    max_cards[i] = points[i]
+                    max_position[i] = position[i]
 
-            self.undo(player, all_card, card)
+            self.undo(player, all_card)
+        return max_cards, max_position
 
+    def max_levels_prunning(self, depth, player):
+        max_cards = [-1, -1, -1, -1, -1]
+        max_position = [-1, -1, -1, -1, -1]
 
-        return points, p_card
+        end = self.is_end()
+
+        number_player = self.number_of_player(player)
+        next_number_of_player = number_player + 1
+
+        if next_number_of_player == len(self.players):
+            next_number_of_player = 0
+
+        if next_number_of_player == 1:
+            self.turn += 1
+
+            max_card_hearts, max_card_diamonds, max_card_clubs, max_card_spades = self.get_max_card_each_suit()
+            self.put_won_cards_in_its_place(max_card_hearts, max_card_diamonds, max_card_clubs, max_card_spades)
+
+        if end or depth == 0:
+            return [get_points(self.players[0]), get_points(self.players[1]), get_points(self.players[2]),
+                    get_points(self.players[3]), get_points(self.players[4])], [-1, -1, -1, -1, -1]
+        for card in range(0, len(player.hand)):
+            all_card = player.hand[card]
+            self.play(player, card)
+            points, position = self.max_levels_prunning(depth - 1, self.players[next_number_of_player])
+            self.undo(player, all_card)
+            if points[number_player] <= max_cards[number_player]:
+                break
+            for i in range(0, len(self.players)):
+                if i == number_player:
+                    if points[i] > max_cards[i]:
+                        max_cards[i] = points[i]
+                        max_position[i] = card
+                elif points[i] > max_cards[i]:
+                    max_cards[i] = points[i]
+                    max_position[i] = position[i]
+
+        return max_cards, max_position

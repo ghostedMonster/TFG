@@ -1,5 +1,5 @@
-from anarquia.rank import Rank
-from anarquia.suit import Suit
+from rank import Rank
+from suit import Suit
 
 
 class Card(object):
@@ -32,7 +32,7 @@ class Card(object):
 
     def __gt__(self, other):
         if self.suit == other.suit:
-            if self.rank > other.rank:
+            if self.rank.value > other.rank.value:
                 return True
         if self.suit.value > other.suit.value:
             return True

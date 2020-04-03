@@ -105,6 +105,8 @@ def turn(player, mouse_x, mouse_y, new_y_position):
     @param mouse_y: Posición en el eje y del ratón
     @param new_y_position: Nueva posición de la carta en la mesa
     """
-    select_card(player, mouse_x, mouse_y)
-    player.remove_from_hand(player.selected_card)
-    update_selected_card_position(player, new_y_position)
+    if player.choice is not None:
+        select_card(player, mouse_x, mouse_y)
+        player.remove_from_hand(player.selected_card)
+        update_selected_card_position(player, new_y_position)
+

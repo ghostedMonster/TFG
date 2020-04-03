@@ -1,10 +1,10 @@
 import pygame
 
-from anarquia.choice import Choice
-from anarquia.deck import Deck
-import anarquia.functions_for_game as f
-from anarquia.functions_for_algorythm import MiniMax, choose_strategy
-from anarquia.player import Player
+from choice import Choice
+from deck import Deck
+import functions_for_game as f
+from functions_for_algorythm import MiniMax, choose_strategy
+from player import Player
 
 
 def main():
@@ -32,6 +32,12 @@ def main():
     player3 = Player("player 3", hand=deck.draw(number_of_cards))
     player4 = Player("player 4", hand=deck.draw(number_of_cards))
     player5 = Player("player 5", hand=deck.draw(number_of_cards))
+
+    player1.hand.sort()
+    player2.hand.sort()
+    player3.hand.sort()
+    player4.hand.sort()
+    player5.hand.sort()
 
     miniMax = MiniMax(deck, [player1, player2, player3, player4, player5])
 
@@ -102,7 +108,7 @@ def main():
         for event in events:
             if event.type == pygame.QUIT:
                 game_is_running = False
-            if event.type == pygame.MOUSEBUTTONUP:
+            if event.type == pygame.MOUSEBUTTONUP and player1.choice is None:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
 
                 mouse_pos = event.pos
@@ -130,10 +136,8 @@ def main():
             if player1.selected_card:
                 f.flip_turns(player1, player2)
 
-        if player1.selected_card:
+        if player1.selected_card and player1.selected_card:
             f.play_selected_card(screen, player1)
-        if player2.selected_card:
-            f.play_selected_card(screen, player2)
 
         if player1.choice is not None:
             strategy_player_1 = my_font.render('Player 1 strategy: ' + player1.choice.name.lower(), True, black, green)
