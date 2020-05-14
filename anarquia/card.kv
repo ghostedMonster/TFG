@@ -1,0 +1,118 @@
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+MyScreenManager:
+    transition: FadeTransition()
+    FirstScreen:
+    SecondScreen:
+
+
+
+<FirstScreen>:
+    name: 'home'
+    canvas.before:
+        Color:
+            rgba: 0, 153/255, 51/255, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    GridLayout:
+        rows: 2
+        Image:
+            center: root.center_x, root.center_y
+            source: 'cartas/zzz_honors_spade-14.png'
+            size_hint: 0.7, 0.4
+            allow_stretch: True
+
+        Button:
+            text: 'Play!!'
+            center: root.center_x, root.center_y
+            size_hint: 0.1, 0.05
+            on_release: app.root.current = 'game'
+
+<SecondScreen>:
+    canvas.before:
+        Color:
+            rgba: 0, 153/255, 51/255, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    name: 'game'
+
+    GridLayout:
+        pos: 0 * self.size[0], 0.8 * self.size[1]
+        cols: 4
+        name: 'players'
+        RelativeLayout:
+            name: 'player2'
+            Label:
+                name: 'name'
+                text: 'Player 2'
+                pos_hint: {'center_x': 0.5, 'center_y': 0}
+            BoxLayout:
+                padding: [5, 5, 5, 5]
+                name: 'cards'
+        RelativeLayout:
+            name: 'player3'
+            Label:
+                name: 'name'
+                text: 'Player 3'
+                pos_hint: {'center_x': 0.5, 'center_y': 0}
+            BoxLayout:
+                padding: [5, 5, 5, 5]
+                name: 'cards'
+        RelativeLayout:
+            name: 'player4'
+            Label:
+                name: 'name'
+                text: 'Player 4'
+                pos_hint: {'center_x': 0.5, 'center_y': 0}
+            BoxLayout:
+                padding: [5, 5, 5, 5]
+                name: 'cards'
+        RelativeLayout:
+            name: 'player5'
+            Label:
+                name: 'name'
+                text: 'Player 5'
+                pos_hint: {'center_x': 0.5, 'center_y': 0}
+            BoxLayout:
+                padding: [5, 5, 5, 5]
+                name: 'cards'
+
+
+    FloatLayout:
+        name: 'board'
+        #las cartas que se generan al darle a comenzar
+
+
+    GridLayout:
+        size_hint: [1, 0.4]
+        cols: 1
+        name: 'player1'
+        BoxLayout:
+            name: 'buttons'
+        BoxLayout:
+            name: 'cards'
+
+
+    BoxLayout:
+        name: 'buttons'
+        Button:
+            name: 'start_btn'
+            text: 'Start'
+            center: root.center_x, root.center_y
+            size_hint: 0.1, 0.05
+            on_release: root.begin()
+        Button:
+            name: 'back_btn'
+            text: 'back'
+            center: root.center_x, root.center_y
+            size_hint: 0.1, 0.05
+            on_release: app.root.current = 'home'
+
+<Card>:
+    name: root.name
+    source: root.src
+    size_hint: (0.1, 0.2)
+    allow_stretch: True
+    pos_hint: {'center_x': 0.95, 'center_y': 0.5}

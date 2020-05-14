@@ -1,6 +1,6 @@
-from anarquia.deck import Deck
-from anarquia.functions_for_algorythm import MiniMax, choose_strategy, get_points
-from anarquia.player import Player
+from deck import Deck
+from functions_for_algorythm import MiniMax, choose_strategy, get_points
+from player import Player
 import time
 
 deck = Deck()
@@ -32,19 +32,70 @@ for player in minimax.players:
 
 start_time = time.time()
 while not minimax.is_end():
-    #points, position_card = minimax.max_levels(player1, len(minimax.players[0].hand) - 2)
-    points, position_card = minimax.max_levels_prunning(15, player1)
-    print(points)
-    print(position_card)
+    #points, position_card = minimax.max_levels(player1, len(minimax.players[0].hand) - 1)
+    results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player1)
+    sum_points_1 = results[0]
+    card_1 = results[1]
+    results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player2)
+    sum_points_2 = results[0]
+    card_2 = results[1]
+    results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player3)
+    sum_points_3 = results[0]
+    card_3 = results[1]
+    results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player4)
+    sum_points_4 = results[0]
+    card_4 = results[1]
+    results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player5)
+    sum_points_5 = results[0]
+    card_5 = results[1]
+    #points, position_card = minimax.max_levels_prunning(10, player1, len(player1.hand))
+    print(sum_points_1)
+    print(card_1)
+
+    print(sum_points_2)
+    print(card_2)
+
+    print(sum_points_3)
+    print(card_3)
+
+    print(sum_points_4)
+    print(card_4)
+
+    print(sum_points_5)
+    print(card_5)
+
     for player in minimax.players:
-        number_player = minimax.number_of_player(player)
-        print("Player " + str(number_player) + "'s hand: " + str(player.hand))
-        print("Player " + str(number_player) + "'s won hand: " + str(player.won_hand))
-        print("Player " + str(number_player) + "'s points" + str(player.score))
-        if position_card[number_player] == -1:
-            position_card[number_player] = 0
-        print("Player " + str(number_player) + "plays card " + str(position_card[number_player]))
-        minimax.play(player, position_card[number_player])
+        number_player = minimax.number_of_player(player) + 1
+        hand = ''
+        won_hand = ''
+        for card in player.hand:
+            hand += str(card) + ', '
+        for card in player.won_hand:
+            won_hand += str(card) + ', '
+
+        print("Player " + str(number_player) + "'s hand: " + hand)
+        print("Player " + str(number_player) + "'s won hand: " + won_hand)
+        print("Player " + str(number_player) + "'s strategy: " + str(player.choice))
+        print("Player " + str(number_player) + "'s points: " + str(player.score))
+        if card_1 == -1:
+            card_1 = 0
+
+        if card_2 == -1:
+            card_2 = 0
+
+        if card_3 == -1:
+            card_3 = 0
+
+        if card_4 == -1:
+            card_4 = 0
+
+        if card_5 == -1:
+            card_5 = 0
+        cards = [card_1, card_2, card_3, card_4, card_5]
+        print("Player " + str(number_player) + "plays card " + str(cards[number_player - 1]))
+        minimax.play(player, cards[number_player - 1])
+    max_hearts, max_diamonds, max_clubs, max_spades = minimax.get_max_card_each_suit()
+    minimax.put_won_cards_in_its_place(max_hearts, max_diamonds, max_clubs, max_clubs)
 
 #points, position_card = minimax.max_cosa(player1)
 

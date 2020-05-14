@@ -110,3 +110,7 @@ def turn(player, mouse_x, mouse_y, new_y_position):
         player.remove_from_hand(player.selected_card)
         update_selected_card_position(player, new_y_position)
 
+
+def play_computer(player, card):
+    if card in player.hand:
+        card.position_y += 50

@@ -6,159 +6,211 @@ import functions_for_game as f
 from functions_for_algorythm import MiniMax, choose_strategy
 from player import Player
 
+pygame.init()
+class Game(object):
+    def __init__(self):
+        self.deck = Deck()
+        self.deck.deck_shuffle()
 
-def main():
-    """
-    Funcion principal del juego
-    """
-    green = (0, 200, 50)
-    black = (0, 0, 0)
-    white = (255, 255, 255)
-    sc_width, sc_height = 1920, 1080
+        self.green = (0, 200, 50)
+        self.black = (0, 0, 0)
+        self.white = (255, 255, 255)
 
-    selected_y_pos_player_1 = 330
+        self.sc_width, self.sc_height = 1920, 1080
 
-    font_size = 30
-    delay_time_ms = 1000
-    number_of_cards = 10
+        self.selected_y_pos_player_1 = 330
 
-    turn = 1
+        self.font_size = 30
 
-    deck = Deck()
-    deck.deck_shuffle()
+        self.number_of_cards = 10
 
-    player1 = Player("player 1", hand=deck.draw(number_of_cards), turn=True, computer=False)
-    player2 = Player("player 2", hand=deck.draw(number_of_cards))
-    player3 = Player("player 3", hand=deck.draw(number_of_cards))
-    player4 = Player("player 4", hand=deck.draw(number_of_cards))
-    player5 = Player("player 5", hand=deck.draw(number_of_cards))
+        self.player1 = Player("player 1", hand=self.deck.draw(self.number_of_cards), turn=True, computer=False)
+        self.player2 = Player("player 2", hand=self.deck.draw(self.number_of_cards))
+        self.player3 = Player("player 3", hand=self.deck.draw(self.number_of_cards))
+        self.player4 = Player("player 4", hand=self.deck.draw(self.number_of_cards))
+        self.player5 = Player("player 5", hand=self.deck.draw(self.number_of_cards))
 
-    player1.hand.sort()
-    player2.hand.sort()
-    player3.hand.sort()
-    player4.hand.sort()
-    player5.hand.sort()
+        for player in [self.player1, self.player2, self.player3, self.player4, self.player5]:
+            for card in player.hand:
+                card.owner = player
 
-    miniMax = MiniMax(deck, [player1, player2, player3, player4, player5])
+        self.player1.hand.sort()
+        self.player2.hand.sort()
+        self.player3.hand.sort()
+        self.player4.hand.sort()
+        self.player5.hand.sort()
 
-    pygame.init()
-    screen = pygame.display.set_mode((sc_width, sc_height), pygame.RESIZABLE)
+        self.player1.hand.sort()
+        self.player2.hand.sort()
+        self.player3.hand.sort()
+        self.player4.hand.sort()
+        self.player5.hand.sort()
 
-    card_width = 175
-    card_height = 250
+        self.miniMax = MiniMax(self.deck, [self.player1, self.player2, self.player3, self.player4, self.player5])
 
-    f.load_card_images(player1, card_width, card_height)
-    f.load_card_images(player2, card_width, card_height)
-    f.load_card_images(player3, card_width, card_height)
-    f.load_card_images(player4, card_width, card_height)
-    f.load_card_images(player5, card_width, card_height)
+        self.my_font = pygame.font.SysFont('Times New Roman', self.font_size)
+        self.text_button_hearts = self.my_font.render('Hearts', True, self.black, self.white)
+        self.text_button_spades = self.my_font.render('Spades', True, self.black, self.white)
+        self.text_button_diamonds = self.my_font.render('Diamonds', True, self.black, self.white)
+        self.text_button_clubs = self.my_font.render('Clubs', True, self.black, self.white)
+        self.text_button_no_suit = self.my_font.render('No suit', True, self.black, self.white)
+        self.text_button_misere = self.my_font.render('Misêre', True, self.black, self.white)
 
-    pygame.font.init()
-    my_font = pygame.font.SysFont('Times New Roman', font_size)
+        self.button_hearts = self.text_button_hearts.get_rect()
+        self.button_spades = self.text_button_spades.get_rect()
+        self.button_diamonds = self.text_button_diamonds.get_rect()
+        self.button_clubs = self.text_button_clubs.get_rect()
+        self.button_no_suit = self.text_button_no_suit.get_rect()
+        self.button_misere = self.text_button_misere.get_rect()
 
-    choose_strategy(player2)
-    choose_strategy(player3)
-    choose_strategy(player4)
-    choose_strategy(player5)
+        self.strategy_player_2 = None
+        self.strategy_player_3 = None
+        self.strategy_player_4 = None
+        self.strategy_player_5 = None
 
-    strategy_player_2 = my_font.render('Player 2 strategy: ' + player2.choice.name.lower(), True, black, green)
-    strategy_player_3 = my_font.render('Player 3 strategy: ' + player3.choice.name.lower(), True, black, green)
-    strategy_player_4 = my_font.render('Player 4 strategy: ' + player4.choice.name.lower(), True, black, green)
-    strategy_player_5 = my_font.render('Player 5 strategy: ' + player5.choice.name.lower(), True, black, green)
+        self.strategy_player_2_rect = None
+        self.strategy_player_3_rect = None
+        self.strategy_player_4_rect = None
+        self.strategy_player_5_rect = None
 
-    strategy_player_2_rect = strategy_player_2.get_rect()
-    strategy_player_3_rect = strategy_player_3.get_rect()
-    strategy_player_4_rect = strategy_player_4.get_rect()
-    strategy_player_5_rect = strategy_player_5.get_rect()
+    def phase_loading(self):
+        card_width = 175
+        card_height = 250
 
-    strategy_player_2_rect.center = (150, 165)
-    strategy_player_3_rect.center = (630, 165)
-    strategy_player_4_rect.center = (1110, 165)
-    strategy_player_5_rect.center = (1590, 165)
+        f.load_card_images(self.player1, card_width, card_height)
+        f.load_card_images(self.player2, card_width, card_height)
+        f.load_card_images(self.player3, card_width, card_height)
+        f.load_card_images(self.player4, card_width, card_height)
+        f.load_card_images(self.player5, card_width, card_height)
 
-    game_is_running = True
+        pygame.font.init()
 
-    text_button_hearts = my_font.render('Hearts', True, black, white)
-    text_button_spades = my_font.render('Spades', True, black, white)
-    text_button_diamonds = my_font.render('Diamonds', True, black, white)
-    text_button_clubs = my_font.render('Clubs', True, black, white)
-    text_button_no_suit = my_font.render('No suit', True, black, white)
-    text_button_misere = my_font.render('Misêre', True, black, white)
+        choose_strategy(self.player2)
+        choose_strategy(self.player3)
+        choose_strategy(self.player4)
+        choose_strategy(self.player5)
 
-    button_hearts = text_button_hearts.get_rect()
-    button_spades = text_button_spades.get_rect()
-    button_diamonds = text_button_diamonds.get_rect()
-    button_clubs = text_button_clubs.get_rect()
-    button_no_suit = text_button_no_suit.get_rect()
-    button_misere = text_button_misere.get_rect()
+        self.strategy_player_2 = self.my_font.render('Player 2 strategy: ' + self.player2.choice.name.lower(), True,
+                                                self.black,
+                                                self.green)
+        self.strategy_player_3 = self.my_font.render('Player 3 strategy: ' + self.player3.choice.name.lower(), True,
+                                                self.black,
+                                                self.green)
+        self.strategy_player_4 = self.my_font.render('Player 4 strategy: ' + self.player4.choice.name.lower(), True,
+                                                self.black,
+                                                self.green)
+        self.strategy_player_5 = self.my_font.render('Player 5 strategy: ' + self.player5.choice.name.lower(), True,
+                                                self.black,
+                                                self.green)
 
-    button_hearts.center = (1590, 680)
-    button_spades.center = (1780, 680)
-    button_diamonds.center = (1590, 780)
-    button_clubs.center = (1780, 780)
-    button_no_suit.center = (1590, 880)
-    button_misere.center = (1780, 880)
+        self.strategy_player_2_rect = self.strategy_player_2.get_rect()
+        self.strategy_player_3_rect = self.strategy_player_3.get_rect()
+        self.strategy_player_4_rect = self.strategy_player_4.get_rect()
+        self.strategy_player_5_rect = self.strategy_player_5.get_rect()
 
-    # main game loop
-    while game_is_running:
-        screen.fill(green)
+        self.strategy_player_2_rect.center = (150, 165)
+        self.strategy_player_3_rect.center = (630, 165)
+        self.strategy_player_4_rect.center = (1110, 165)
+        self.strategy_player_5_rect.center = (1590, 165)
 
-        mouse_x, mouse_y = None, None
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.QUIT:
-                game_is_running = False
-            if event.type == pygame.MOUSEBUTTONUP and player1.choice is None:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
+        self.button_hearts.center = (1590, 680)
+        self.button_spades.center = (1780, 680)
+        self.button_diamonds.center = (1590, 780)
+        self.button_clubs.center = (1780, 780)
+        self.button_no_suit.center = (1590, 880)
+        self.button_misere.center = (1780, 880)
 
-                mouse_pos = event.pos
+    def phase_1(self, mouse_pos, screen):
+        if mouse_pos is not None:
+            if self.button_clubs.collidepoint(mouse_pos):
+                self.player1.choice = Choice.CLUBS
+            if self.button_hearts.collidepoint(mouse_pos):
+                self.player1.choice = Choice.HEARTS
+            if self.button_diamonds.collidepoint(mouse_pos):
+                self.player1.choice = Choice.DIAMONDS
+            if self.button_spades.collidepoint(mouse_pos):
+                self.player1.choice = Choice.SPADES
+            if self.button_no_suit.collidepoint(mouse_pos):
+                self.player1.choice = Choice.NO_SUIT
+            if self.button_misere.collidepoint(mouse_pos):
+                self.player1.choice = Choice.MISERE
 
-                if button_clubs.collidepoint(mouse_pos):
-                    player1.choice = Choice.CLUBS
-                if button_hearts.collidepoint(mouse_pos):
-                    player1.choice = Choice.HEARTS
-                if button_diamonds.collidepoint(mouse_pos):
-                    player1.choice = Choice.DIAMONDS
-                if button_spades.collidepoint(mouse_pos):
-                    player1.choice = Choice.SPADES
-                if button_no_suit.collidepoint(mouse_pos):
-                    player1.choice = Choice.NO_SUIT
-                if button_misere.collidepoint(mouse_pos):
-                    player1.choice = Choice.MISERE
+        screen.blit(self.text_button_hearts, self.button_hearts)
+        screen.blit(self.text_button_clubs, self.button_clubs)
+        screen.blit(self.text_button_diamonds, self.button_diamonds)
+        screen.blit(self.text_button_spades, self.button_spades)
+        screen.blit(self.text_button_no_suit, self.button_no_suit)
+        screen.blit(self.text_button_misere, self.button_misere)
 
-            if event.type == pygame.VIDEORESIZE:
-                screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
+    def not_phase_1(self, screen):
+        strategy_player_1 = self.my_font.render('Player 1 strategy: ' + self.player1.choice.name.lower(), True, self.black, self.green)
+        strategy_player_1_rect = strategy_player_1.get_rect()
+        strategy_player_1_rect.center = (150, 700)
 
-        f.show_hand(screen, player1)
-        f.show_covered_hand(screen, [player2, player3, player4, player5])
-        if player1.turn:
-            f.turn(player1, mouse_x, mouse_y, selected_y_pos_player_1)
-            if player1.selected_card:
-                f.flip_turns(player1, player2)
+        screen.blit(strategy_player_1, strategy_player_1_rect)
+        screen.blit(self.strategy_player_2, self.strategy_player_2_rect)
+        screen.blit(self.strategy_player_3, self.strategy_player_3_rect)
+        screen.blit(self.strategy_player_4, self.strategy_player_4_rect)
+        screen.blit(self.strategy_player_5, self.strategy_player_5_rect)
 
-        if player1.selected_card and player1.selected_card:
-            f.play_selected_card(screen, player1)
+    def get_max_card_suit(self, card, player):
+        max_card = None
+        for carta in player.hand:
+            if carta.suit == card.suit:
+                if max_card is None:
+                    max_card = carta
+                elif max_card.rank.value < carta.rank.value:
+                    max_card = carta
+        return max_card
 
-        if player1.choice is not None:
-            strategy_player_1 = my_font.render('Player 1 strategy: ' + player1.choice.name.lower(), True, black, green)
-            strategy_player_1_rect = strategy_player_1.get_rect()
-            strategy_player_1_rect.center = (150, 700)
+    def phase_2(self, screen):
+        self.not_phase_1(screen)
+        if self.deck.cards[0].image is None:
+            for card in self.deck.cards:
+                image = pygame.image.load("cartas/" + str(card) + ".png")
+                card.image = pygame.transform.scale(image, (175, 250))
+                width, height = card.image.get_size()
+                card.horizontal_dimension = width
+                card.vertical_dimension = height
 
-            screen.blit(strategy_player_1, strategy_player_1_rect)
-            screen.blit(strategy_player_2, strategy_player_2_rect)
-            screen.blit(strategy_player_3, strategy_player_3_rect)
-            screen.blit(strategy_player_4, strategy_player_4_rect)
-            screen.blit(strategy_player_5, strategy_player_5_rect)
-        else:
-            screen.blit(text_button_hearts, button_hearts)
-            screen.blit(text_button_clubs, button_clubs)
-            screen.blit(text_button_diamonds, button_diamonds)
-            screen.blit(text_button_spades, button_spades)
-            screen.blit(text_button_no_suit, button_no_suit)
-            screen.blit(text_button_misere, button_misere)
-        pygame.display.update()
-    pygame.quit()
+        carta = self.deck.draw()
+        carta_sola = carta[0]
 
 
-if __name__ == '__main__':
-    main()
+
+        screen.blit(carta_sola.image, (960, 540))
+
+        winner_card = None
+
+        for player in [self.player1, self.player2, self.player3, self.player4, self.player5]:
+            max_card = self.get_max_card_suit(carta_sola, player)
+            if max_card is not None:
+                screen.blit(max_card.image, (max_card.position_x, max_card.position_y + 100))
+
+            if winner_card is None:
+                winner_card = max_card
+            elif max_card.rank.value > winner_card.rank.value:
+                winner_card = max_card
+        print(str(winner_card))
+        winner = winner_card.owner
+        winner.won_hand.append(carta_sola)
+
+    def phase_3(self, mouse_x, mouse_y, screen):
+        if not self.miniMax.played_cards:
+            points, position_cards = self.miniMax.max_levels_prunning(10, self.player1)
+            self.miniMax.play(self.player2, position_cards[1])
+            pygame.time.delay(200)
+            self.miniMax.play(self.player3, position_cards[2])
+            pygame.time.delay(200)
+            self.miniMax.play(self.player4, position_cards[3])
+            pygame.time.delay(200)
+            self.miniMax.play(self.player5, position_cards[4])
+            pygame.time.delay(200)
+
+            for card in self.miniMax.played_cards:
+                card.position_y += 50
+
+
+        f.turn(self.player1, mouse_x, mouse_y, self.selected_y_pos_player_1)
+        if self.player1.selected_card:
+            self.player1.turn = False

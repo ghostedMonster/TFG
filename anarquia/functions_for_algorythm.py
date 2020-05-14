@@ -338,7 +338,56 @@ class MiniMax(object):
             self.undo(player, all_card)
         return max_cards, max_position
 
-    def max_levels_prunning(self, depth, player):
+
+    def max_levels_prunning_v2(self, depth, alpha, beta, curr_player, first_player):
+        end = self.is_end()
+
+        number_curr_player = self.number_of_player(curr_player)
+        next_number_of_player = number_curr_player + 1
+        number_first_player = self.number_of_player(first_player)
+
+        if next_number_of_player == len(self.players):
+            next_number_of_player = 0
+
+        if next_number_of_player == 1:
+            self.turn += 1
+
+            max_card_hearts, max_card_diamonds, max_card_clubs, max_card_spades = self.get_max_card_each_suit()
+            self.put_won_cards_in_its_place(max_card_hearts, max_card_diamonds, max_card_clubs, max_card_spades)
+
+        if end or depth == 0:
+            sum_points = 0
+            for player in self.players:
+                points = get_points(player)
+                sum_points += points
+            return sum_points, -1
+        used_card = -1
+        for card in range(0, len(curr_player.hand)):
+            all_card = curr_player.hand[card]
+            self.play(curr_player, card)
+
+            if number_curr_player == number_first_player:
+                alpha = max(alpha, self.max_levels_prunning_v2(depth - 1, alpha, beta,
+                                                               self.players[next_number_of_player], first_player)[0])
+                self.undo(curr_player, all_card)
+                if beta <= alpha:
+                    break
+                else:
+                    used_card = card
+            else:
+                beta = min(beta, self.max_levels_prunning_v2(depth - 1, alpha, beta,
+                                                             self.players[next_number_of_player], first_player)[0])
+                self.undo(curr_player, all_card)
+                if beta <= alpha:
+                    break
+                else:
+                    used_card = card
+        if number_first_player == number_curr_player:
+            return alpha, used_card
+        else:
+            return beta, used_card
+
+    def max_levels_prunning(self, depth, player, started_cards):
         max_cards = [-1, -1, -1, -1, -1]
         max_position = [-1, -1, -1, -1, -1]
 
@@ -362,10 +411,21 @@ class MiniMax(object):
         for card in range(0, len(player.hand)):
             all_card = player.hand[card]
             self.play(player, card)
-            points, position = self.max_levels_prunning(depth - 1, self.players[next_number_of_player])
+            points, position = self.max_levels_prunning(depth - 1, self.players[next_number_of_player], started_cards)
             self.undo(player, all_card)
-            if points[number_player] <= max_cards[number_player]:
+
+            sum_max_points = 0
+            for point in max_cards:
+                sum_max_points += point
+
+            sum_points = 0
+            for point in points:
+                sum_points += point
+#            if points[number_player] <= max_cards[number_player]:
+
+            if sum_max_points > sum_points:
                 break
+
             for i in range(0, len(self.players)):
                 if i == number_player:
                     if points[i] > max_cards[i]:
