@@ -50,7 +50,15 @@ MyScreenManager:
                 pos_hint: {'center_x': 0.5, 'center_y': 0}
             BoxLayout:
                 padding: [5, 5, 5, 5]
+                size_hint: 1, .4
+                pos_hint: {'center_y': .325}
+                pos: 0, 0
                 name: 'cards'
+            BoxLayout:
+                padding: [5, 5, 5, 5]
+                size_hint: 1, .4
+                pos_hint: {'center_y': .28}
+                name: 'won_cards'
         RelativeLayout:
             name: 'player3'
             Label:
@@ -59,7 +67,14 @@ MyScreenManager:
                 pos_hint: {'center_x': 0.5, 'center_y': 0}
             BoxLayout:
                 padding: [5, 5, 5, 5]
+                pos_hint: {'center_y': .325}
+                size_hint: 1, .4
                 name: 'cards'
+            BoxLayout:
+                padding: [5, 5, 5, 5]
+                size_hint: 1, .4
+                pos_hint: {'center_y': .28}
+                name: 'won_cards'
         RelativeLayout:
             name: 'player4'
             Label:
@@ -68,7 +83,14 @@ MyScreenManager:
                 pos_hint: {'center_x': 0.5, 'center_y': 0}
             BoxLayout:
                 padding: [5, 5, 5, 5]
+                pos_hint: {'center_y': .325}
+                size_hint: 1, .4
                 name: 'cards'
+            BoxLayout:
+                padding: [5, 5, 5, 5]
+                size_hint: 1, .4
+                pos_hint: {'center_y': .28}
+                name: 'won_cards'
         RelativeLayout:
             name: 'player5'
             Label:
@@ -77,7 +99,14 @@ MyScreenManager:
                 pos_hint: {'center_x': 0.5, 'center_y': 0}
             BoxLayout:
                 padding: [5, 5, 5, 5]
+                pos_hint: {'center_y': .325}
+                size_hint: 1, .4
                 name: 'cards'
+            BoxLayout:
+                padding: [5, 5, 5, 5]
+                size_hint: 1, .4
+                pos_hint: {'center_y': .28}
+                name: 'won_cards'
 
 
     FloatLayout:
@@ -87,13 +116,21 @@ MyScreenManager:
 
     GridLayout:
         size_hint: [1, 0.4]
+        pos_hint: {'center_y': .25}
         cols: 1
         name: 'player1'
-        BoxLayout:
+        GridLayout:
+            cols: 6
+            size_hint: [1, 0.15]
             name: 'buttons'
-        BoxLayout:
+        GridLayout:
+            cols: 50
+            size_hint: [1, 0.425]
+            name: 'won_cards'
+        GridLayout:
+            cols: 10
+            size_hint: [1, 0.425]
             name: 'cards'
-
 
     BoxLayout:
         name: 'buttons'
@@ -110,6 +147,12 @@ MyScreenManager:
             size_hint: 0.1, 0.05
             on_release: app.root.current = 'home'
 
+    FloatLayout:
+        name: 'finish'
+        center: root.center_x, root.center_y
+        size: root.size[0] * 0.7, root.size[1] * 0.5
+        BoxLayout:
+            name: 'scores'
 <Card>:
     name: root.name
     source: root.src

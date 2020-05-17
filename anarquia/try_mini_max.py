@@ -49,20 +49,6 @@ while not minimax.is_end():
     sum_points_5 = results[0]
     card_5 = results[1]
     #points, position_card = minimax.max_levels_prunning(10, player1, len(player1.hand))
-    print(sum_points_1)
-    print(card_1)
-
-    print(sum_points_2)
-    print(card_2)
-
-    print(sum_points_3)
-    print(card_3)
-
-    print(sum_points_4)
-    print(card_4)
-
-    print(sum_points_5)
-    print(card_5)
 
     for player in minimax.players:
         number_player = minimax.number_of_player(player) + 1

@@ -9,7 +9,7 @@ from kivy.uix.screenmanager import Screen, ScreenManager
 
 from choice import Choice
 from deck import Deck
-from functions_for_algorythm import choose_strategy, MiniMax
+from functions_for_algorythm import choose_strategy, MiniMax, get_points
 from player import Player
 
 
@@ -38,19 +38,26 @@ class ImageButton(ButtonBehavior, Image):
             if player.choice is not None:
                 count_strategies += 1
         if count_strategies == 5:
-            points, positions = self.minimax.max_levels_prunning(10, self.minimax.players[0],
-                                                                 len(self.minimax.players[0].hand))
+            results_2 = self.minimax.max_levels_prunning_v2(5, -1000, 1000, self.minimax.players[0],
+                                                            self.minimax.players[1])
+            results_3 = self.minimax.max_levels_prunning_v2(5, -1000, 1000, self.minimax.players[0],
+                                                            self.minimax.players[2])
+            results_4 = self.minimax.max_levels_prunning_v2(5, -1000, 1000, self.minimax.players[0],
+                                                            self.minimax.players[3])
+            results_5 = self.minimax.max_levels_prunning_v2(5, -1000, 1000, self.minimax.players[0],
+                                                            self.minimax.players[4])
+
             carta_completa_player1 = self.minimax.players[0].hand[mi_carta]
-            carta_completa_player2 = self.minimax.players[1].hand[positions[1]]
-            carta_completa_player3 = self.minimax.players[2].hand[positions[2]]
-            carta_completa_player4 = self.minimax.players[3].hand[positions[3]]
-            carta_completa_player5 = self.minimax.players[4].hand[positions[4]]
-            #points, positions = self.minimax.max_levels(self.minimax.players[0], len(self.minimax.players[0].hand) - 1)
+            carta_completa_player2 = self.minimax.players[1].hand[results_2[1]]
+            carta_completa_player3 = self.minimax.players[2].hand[results_3[1]]
+            carta_completa_player4 = self.minimax.players[3].hand[results_4[1]]
+            carta_completa_player5 = self.minimax.players[4].hand[results_5[1]]
+            # points, positions = self.minimax.max_levels(self.minimax.players[0], len(self.minimax.players[0].hand) - 1)
             self.minimax.play(self.minimax.players[0], mi_carta)
-            self.minimax.play(self.minimax.players[1], positions[1])
-            self.minimax.play(self.minimax.players[2], positions[2])
-            self.minimax.play(self.minimax.players[3], positions[3])
-            self.minimax.play(self.minimax.players[4], positions[4])
+            self.minimax.play(self.minimax.players[1], results_2[1])
+            self.minimax.play(self.minimax.players[2], results_3[1])
+            self.minimax.play(self.minimax.players[3], results_4[1])
+            self.minimax.play(self.minimax.players[4], results_5[1])
 
         cartas_player1_layout = self.parent
         player1_layout = cartas_player1_layout.parent
@@ -61,42 +68,42 @@ class ImageButton(ButtonBehavior, Image):
 
                 for child1 in child.children:
                     if child1.name == 'player2':
-                        print(child1.name)
                         for child2 in child1.children:
                             if child2.name == 'cards':
-                                print(child2.name)
-                                print("eliminada carta de jugador 2")
                                 child2.remove_widget(child2.children[0])
                     if child1.name == 'player3':
                         for child2 in child1.children:
                             if child2.name == 'cards':
-                                print("eliminada carta de jugador 3")
                                 child2.remove_widget(child2.children[0])
                     if child1.name == 'player4':
                         for child2 in child1.children:
                             if child2.name == 'cards':
-                                print("eliminada carta de jugador 4")
                                 child2.remove_widget(child2.children[0])
                     if child1.name == 'player5':
                         for child2 in child1.children:
                             if child2.name == 'cards':
-                                print("eliminada carta de jugador 5")
                                 child2.remove_widget(child2.children[0])
 
             if child.name == 'player1':
                 for child1 in child.children:
                     if child1.name == 'cards':
-                        print("eliminada carta de jugador 1")
-                        child1.remove_widget(child1.children[mi_carta - 1])
+                        imagen_mi_carta = carta_completa_player1.image
                         for child2 in child1.children:
                             child2.disabled = True
+                            if child2.source == imagen_mi_carta:
+                                child1.remove_widget(child2)
 
             if child.name == 'board':
-                carta_player1 = Image(source=carta_completa_player1.image, size_hint=(.1, .15), pos=(0.5 * child.size[0], 0))
-                carta_player2 = Image(source=carta_completa_player2.image, size_hint=(.1, .15),  pos=(0, 0.9 * child.size[1]))
-                carta_player3 = Image(source=carta_completa_player3.image, size_hint=(.1, .15), pos=(0.25 * child.size[0], 0.9 * child.size[1]))
-                carta_player4 = Image(source=carta_completa_player4.image, size_hint=(.1, .15), pos=(0.5 * child.size[0], 0.9 * child.size[1]))
-                carta_player5 = Image(source=carta_completa_player5.image, size_hint=(.1, .15), pos=(0.75 * child.size[0], 0.9 * child.size[1]))
+                carta_player1 = Image(source=carta_completa_player1.image, size_hint=(.1, .15),
+                                      pos=(0.5 * child.size[0], 0))
+                carta_player2 = Image(source=carta_completa_player2.image, size_hint=(.1, .15),
+                                      pos=(0, 0.9 * child.size[1]))
+                carta_player3 = Image(source=carta_completa_player3.image, size_hint=(.1, .15),
+                                      pos=(0.25 * child.size[0], 0.9 * child.size[1]))
+                carta_player4 = Image(source=carta_completa_player4.image, size_hint=(.1, .15),
+                                      pos=(0.5 * child.size[0], 0.9 * child.size[1]))
+                carta_player5 = Image(source=carta_completa_player5.image, size_hint=(.1, .15),
+                                      pos=(0.75 * child.size[0], 0.9 * child.size[1]))
 
                 child.add_widget(carta_player1)
                 child.add_widget(carta_player2)
@@ -121,8 +128,10 @@ class ImageButton(ButtonBehavior, Image):
                 animation_4.start(carta_player4)
                 animation_5.start(carta_player5)
 
-                next_button = Button(text='Next turn', pos=(0, child.size[1] * 0.2), size_hint=(1, 0.05), on_release=child.next_round)
+                next_button = Button(text='Next turn', pos=(0, child.size[1] * 0.2), size_hint=(1, 0.05),
+                                     on_release=screen.next_round)
                 child.add_widget(next_button)
+
 
 class SecondScreen(Screen):
     deck = None
@@ -134,34 +143,133 @@ class SecondScreen(Screen):
     minimax = None
 
     def update_won_cards(self, cards_to_update):
+        card_images = []
+        for card in cards_to_update:
+            card_images.append(card.image)
         for child in self.children:
-            if child.name == 'board':
+            if child.name == "board":
                 board = child
                 for child1 in board.children:
-                    if child1.carta in cards_to_update:
+                    cards_for_player_1 = []
+                    cards_for_player_2 = []
+                    cards_for_player_3 = []
+                    cards_for_player_4 = []
+                    cards_for_player_5 = []
+
+                    if child1.source in card_images:
                         carta = child1
                         anim = Animation()
-                        if carta.carta.won_by == self.minimax.players[0]:
-                            anim = Animation(x=self.size[0] * 0.5, y=self.size[1] * 0.2, size=(50, 75), duration=0.4,
-                                             t='out_elastic')
-                        if carta.carta.won_by == self.minimax.players[1]:
-                            anim = Animation(x=self.size[0] * 0.15, y=self.size[1] * 0.8, size=(50, 75), duration=0.4,
-                                             t='out_elastic')
-                        if carta.carta.won_by == self.minimax.players[2]:
-                            anim = Animation(x=self.size[0] * 0.35, y=self.size[1] * 0.8, size=(50, 75), duration=0.4,
-                                             t='out_elastic')
-                        if carta.carta.won_by == self.minimax.players[3]:
-                            anim = Animation(x=self.size[0] * 0.55, y=self.size[1] * 0.8, size=(50, 75), duration=0.4,
-                                             t='out_elastic')
-                        if carta.carta.won_by == self.minimax.players[4]:
-                            anim = Animation(x=self.size[0] * 0.75, y=self.size[1] * 0.8, size=(50, 75), duration=0.4,
-                                             t='out_elastic')
+                        for i in cards_to_update:
+                            if carta.source == i.image:
+                                if i.won_by == self.minimax.players[0]:
+                                    anim = Animation(pos=(self.size[0] * 0.5, self.size[1] * 0.2), size=(50, 75),
+                                                     duration=0.5, t='out_elastic')
+
+                                elif i.won_by == self.minimax.players[1]:
+                                    anim = Animation(pos=(self.size[0] * 0.15, self.size[1] * 0.7), size=(50, 75),
+                                                     duration=0.5, t='out_elastic')
+
+                                elif i.won_by == self.minimax.players[2]:
+                                    anim = Animation(pos=(self.size[0] * 0.35, self.size[1] * 0.7), size=(50, 75),
+                                                     duration=0.5, t='out_elastic')
+
+                                elif i.won_by == self.minimax.players[3]:
+                                    anim = Animation(pos=(self.size[0] * 0.65, self.size[1] * 0.7), size=(50, 75),
+                                                     duration=0.5, t='out_elastic')
+
+                                elif i.won_by == self.minimax.players[4]:
+                                    anim = Animation(pos=(self.size[0] * 0.85, self.size[1] * 0.7), size=(50, 75),
+                                                     duration=0.5, t='out_elastic')
+                        anim.bind(on_complete=self.give_won_card)
                         anim.start(carta)
 
-    def next_round(self):
+    def give_won_card(self, animation, widget):
+        for i in self.children:
+            if i.name == "board":
+                board = i
+                board.remove_widget(widget)
+            if i.name == "players":
+                players = i
+                for j in players.children:
+                    if j.name == "player2":
+                        player2 = j
+                        for k in player2.children:
+                            if k.name == "won_cards":
+                                for card in self.minimax.players[1].won_hand:
+                                    if card.image == widget.source:
+                                        won_cards = k
+                                        carta = Image(source=widget.source, size_hint=widget.size_hint,
+                                                      allow_stretch=True)
+                                        won_cards.add_widget(carta)
+                    if j.name == "player3":
+                        player3 = j
+                        for k in player3.children:
+                            if k.name == "won_cards":
+                                for card in self.minimax.players[2].won_hand:
+                                    if card.image == widget.source:
+                                        won_cards = k
+                                        carta = Image(source=widget.source, size_hint=widget.size_hint,
+                                                      allow_stretch=True)
+                                        won_cards.add_widget(carta)
+                    if j.name == "player4":
+                        player4 = j
+                        for k in player4.children:
+                            if k.name == "won_cards":
+                                for card in self.minimax.players[3].won_hand:
+                                    if card.image == widget.source:
+                                        won_cards = k
+                                        carta = Image(source=widget.source, size_hint=widget.size_hint,
+                                                      allow_stretch=True)
+                                        won_cards.add_widget(carta)
+                    if j.name == "player5":
+                        player5 = j
+                        for k in player5.children:
+                            if k.name == "won_cards":
+                                for card in self.minimax.players[4].won_hand:
+                                    if card.image == widget.source:
+                                        won_cards = k
+                                        carta = Image(source=widget.source, size_hint=widget.size_hint,
+                                                      allow_stretch=True)
+                                        won_cards.add_widget(carta)
+            if i.name == "player1":
+                player1 = i
+                for j in player1.children:
+                    if j.name == "won_cards":
+                        for card in self.minimax.players[0].won_hand:
+                            if card.image == widget.source:
+                                won_cards = j
+                                carta = Image(source=widget.source, size_hint=widget.size_hint, allow_stretch=True)
+                                won_cards.add_widget(carta)
+
+    def next_round(self, *largs):
+        if self.minimax.is_end():
+            for i in self.children:
+                if i.name == "finish":
+                    for j in i.children:
+                        if j.name == "scores":
+                            for player in self.minimax.players:
+                                number_player = self.minimax.number_of_player(player)
+                                player.score = get_points(player)
+                                j.add_widget(Label(text="Points of player " + str(number_player) + ": " +
+                                                        str(player.score), font_size="15sp"))
+
+        for i in self.children:
+            if i.name == "board":
+                board = i
+                for j in board.children:
+                    if isinstance(j, Button):
+                        board.remove_widget(j)
+            if i.name == "player1":
+                player1 = i
+                for j in player1.children:
+                    if j.name == "cards":
+                        cards = j
+                        for card in cards.children:
+                            card.disabled = False
+
         cards_to_update = self.minimax.played_cards
         max_hearts, max_diamonds, max_clubs, max_spades = self.minimax.get_max_card_each_suit()
-        self.minimax.put_won_cards_in_its_place(max_hearts, max_diamonds, max_clubs, max_clubs)
+        self.minimax.put_won_cards_in_its_place(max_hearts, max_diamonds, max_clubs, max_spades)
         self.update_won_cards(cards_to_update)
 
     def give_player(self, player, x, y, offset):
