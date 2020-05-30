@@ -132,6 +132,32 @@ class ImageButton(ButtonBehavior, Image):
                                      on_release=screen.next_round)
                 child.add_widget(next_button)
 
+class FinishScreen(Screen):
+    def on_pre_enter(self, *args):
+        minimax = self.manager.get_screen('game').minimax
+        for i in self.children:
+            if i.name == 'all':
+                for j in i.children:
+                    if j.name == 'player1':
+                        player1 = minimax.players[0]
+                        player1.score = get_points(player1)
+                        j.text += str(player1.score)
+                    if j.name == 'player2':
+                        player2 = minimax.players[1]
+                        player2.score = get_points(player2)
+                        j.text += str(player2.score)
+                    if j.name == 'player3':
+                        player3 = minimax.players[2]
+                        player3.score = get_points(player3)
+                        j.text += str(player3.score)
+                    if j.name == 'player4':
+                        player4 = minimax.players[3]
+                        player4.score = get_points(player4)
+                        j.text += str(player4.score)
+                    if j.name == 'player5':
+                        player5 = minimax.players[4]
+                        player5.score = get_points(player5)
+                        j.text += str(player5.score)
 
 class SecondScreen(Screen):
     deck = None
@@ -243,15 +269,7 @@ class SecondScreen(Screen):
 
     def next_round(self, *largs):
         if self.minimax.is_end():
-            for i in self.children:
-                if i.name == "finish":
-                    for j in i.children:
-                        if j.name == "scores":
-                            for player in self.minimax.players:
-                                number_player = self.minimax.number_of_player(player)
-                                player.score = get_points(player)
-                                j.add_widget(Label(text="Points of player " + str(number_player) + ": " +
-                                                        str(player.score), font_size="15sp"))
+            self.manager.current = 'finish'
 
         for i in self.children:
             if i.name == "board":
