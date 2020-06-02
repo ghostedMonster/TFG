@@ -219,29 +219,42 @@ class MiniMax(object):
         max_card_diamonds = None
         max_card_spades = None
         max_card_clubs = None
+
+        cards_hearts = []
+        ranks_hearts = []
+
+        cards_diamonds = []
+        ranks_diamonds = []
+
+        cards_spades = []
+        ranks_spades = []
+
+        cards_clubs = []
+        ranks_clubs = []
+
         for card in self.played_cards:
-            for card_2 in self.played_cards:
-                if card.suit == card_2.suit:
-                    if card.suit == Suit.HEARTS:
-                        if max_card_hearts is None:
-                            max_card_hearts = card
-                        if card.rank.value > card_2.rank.value:
-                            max_card_hearts = card
-                    elif card.suit == Suit.DIAMONDS:
-                        if max_card_diamonds is None:
-                            max_card_diamonds = card
-                        if card.rank.value > card_2.rank.value:
-                            max_card_diamonds = card
-                    elif card.suit == Suit.SPADES:
-                        if max_card_spades is None:
-                            max_card_spades = card
-                        if card.rank.value > card_2.rank.value:
-                            max_card_spades = card
-                    elif card.suit == Suit.CLUBS:
-                        if max_card_clubs is None:
-                            max_card_clubs = card
-                        if card.rank.value > card_2.rank.value:
-                            max_card_clubs = card
+            if card.suit == Suit.HEARTS:
+                cards_hearts.append(card)
+                ranks_hearts.append(card.rank)
+            if card.suit == Suit.DIAMONDS:
+                cards_diamonds.append(card)
+                ranks_diamonds.append(card.rank)
+            if card.suit == Suit.SPADES:
+                cards_spades.append(card)
+                ranks_spades.append(card.rank)
+            if card.suit == Suit.CLUBS:
+                cards_clubs.append(card)
+                ranks_clubs.append(card.rank)
+
+        if cards_hearts:
+            max_card_hearts = max(cards_hearts, key=lambda item: item.rank.value)
+        if cards_diamonds:
+            max_card_diamonds = max(cards_diamonds, key=lambda item: item.rank.value)
+        if cards_spades:
+            max_card_spades = max(cards_spades, key=lambda item: item.rank.value)
+        if cards_clubs:
+            max_card_clubs = max(cards_clubs, key=lambda item: item.rank.value)
+
         return max_card_hearts, max_card_diamonds, max_card_clubs, max_card_spades
 
     def put_won_cards_in_its_place(self, max_card_hearts, max_card_diamonds, max_card_clubs, max_card_spades):

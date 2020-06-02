@@ -12,6 +12,10 @@ from deck import Deck
 from functions_for_algorythm import choose_strategy, MiniMax, get_points
 from player import Player
 
+from kivy.config import Config
+Config.set('graphics', 'width', '1280')
+Config.set('graphics', 'height', '720')
+
 
 class FirstScreen(Screen):
     pass

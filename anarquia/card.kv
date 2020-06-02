@@ -17,13 +17,16 @@ MyScreenManager:
             pos: self.pos
             size: self.size
     GridLayout:
-        rows: 2
+        rows: 3
         Image:
             center: root.center_x, root.center_y
             source: 'cartas/zzz_honors_spade-14.png'
             size_hint: 0.7, 0.4
             allow_stretch: True
-
+        Label:
+            text: 'Anarquía'
+            size_hint: 1., .2
+            font_size: 90
         Button:
             text: 'Play!!'
             center: root.center_x, root.center_y
