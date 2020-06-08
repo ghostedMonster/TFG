@@ -1,3 +1,4 @@
+# coding=utf-8
 from kivy.animation import Animation
 from kivy.app import App
 from kivy.lang import Builder
@@ -26,6 +27,16 @@ class ImageButton(ButtonBehavior, Image):
     minimax = None
 
     def on_release(self):
+        cartas_player1_layout = self.parent
+        player1_layout = cartas_player1_layout.parent
+        screen = player1_layout.parent
+        for child in screen.children:
+            if child.name == 'player1':
+                for child1 in child.children:
+                    if child1.name == 'cards':
+                        for child2 in child1.children:
+                            child2.disabled = True
+
         count_strategies = 0
         mi_carta = None
 
