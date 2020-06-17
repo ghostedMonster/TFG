@@ -53,14 +53,24 @@ class ImageButton(ButtonBehavior, Image):
             if player.choice is not None:
                 count_strategies += 1
         if count_strategies == 5:
-            results_2 = self.minimax.max_levels_prunning_v2(5, -1000, 1000, self.minimax.players[0],
-                                                            self.minimax.players[1])
-            results_3 = self.minimax.max_levels_prunning_v2(5, -1000, 1000, self.minimax.players[0],
-                                                            self.minimax.players[2])
-            results_4 = self.minimax.max_levels_prunning_v2(5, -1000, 1000, self.minimax.players[0],
-                                                            self.minimax.players[3])
-            results_5 = self.minimax.max_levels_prunning_v2(5, -1000, 1000, self.minimax.players[0],
-                                                            self.minimax.players[4])
+            if len(self.minimax.players[1].hand) <= 5:
+                results_2 = self.minimax.max_levels_prunning_v2(10, -1000, 1000, self.minimax.players[0],
+                                                                self.minimax.players[1])
+                results_3 = self.minimax.max_levels_prunning_v2(10, -1000, 1000, self.minimax.players[0],
+                                                                self.minimax.players[2])
+                results_4 = self.minimax.max_levels_prunning_v2(10, -1000, 1000, self.minimax.players[0],
+                                                                self.minimax.players[3])
+                results_5 = self.minimax.max_levels_prunning_v2(10, -1000, 1000, self.minimax.players[0],
+                                                                self.minimax.players[4])
+            else:
+                results_2 = self.minimax.max_levels_prunning_v2(5, -1000, 1000, self.minimax.players[0],
+                                                                self.minimax.players[1])
+                results_3 = self.minimax.max_levels_prunning_v2(5, -1000, 1000, self.minimax.players[0],
+                                                                self.minimax.players[2])
+                results_4 = self.minimax.max_levels_prunning_v2(5, -1000, 1000, self.minimax.players[0],
+                                                                self.minimax.players[3])
+                results_5 = self.minimax.max_levels_prunning_v2(5, -1000, 1000, self.minimax.players[0],
+                                                                self.minimax.players[4])
 
             carta_completa_player1 = self.minimax.players[0].hand[mi_carta]
             carta_completa_player2 = self.minimax.players[1].hand[results_2[1]]

@@ -1,3 +1,5 @@
+import random
+
 from deck import Deck
 from functions_for_algorythm import MiniMax, choose_strategy, get_points
 from player import Player
@@ -31,25 +33,54 @@ for player in minimax.players:
         player.hand[position].position_hand = position
 
 start_time = time.time()
+turn = 0
 while not minimax.is_end():
-    #points, position_card = minimax.max_levels(player1, len(minimax.players[0].hand) - 1)
-    results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player1)
+    turn += 1
+
+    if turn <= 5:
+        results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player1)
+    else:
+        results = minimax.max_levels_prunning_v2(10, -1000, 1000, player1, player1)
     sum_points_1 = results[0]
+    #results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player1)
     card_1 = results[1]
-    results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player2)
+
+    if turn <= 5:
+        results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player2)
+    else:
+        results = minimax.max_levels_prunning_v2(10, -1000, 1000, player1, player2)
     sum_points_2 = results[0]
     card_2 = results[1]
-    results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player3)
+    # results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player2)
+
+    if turn <= 5:
+        results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player3)
+    else:
+        results = minimax.max_levels_prunning_v2(10, -1000, 1000, player1, player3)
     sum_points_3 = results[0]
     card_3 = results[1]
-    results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player4)
+    # results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player3)
+
+    if turn <= 5:
+        results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player4)
+    else:
+        results = minimax.max_levels_prunning_v2(10, -1000, 1000, player1, player4)
     sum_points_4 = results[0]
     card_4 = results[1]
-    results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player5)
+    # results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player4)
+
+    if turn <= 5:
+        results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player5)
+    else:
+        results = minimax.max_levels_prunning_v2(10, -1000, 1000, player1, player5)
     sum_points_5 = results[0]
     card_5 = results[1]
-    #points, position_card = minimax.max_levels_prunning(10, player1, len(player1.hand))
+    #results = minimax.max_levels_prunning_v2(5, -1000, 1000, player1, player5)
 
+    # points, position_card = minimax.max_levels_prunning(10, player1, len(player1.hand))
+    print("_______________________________________________________________________________")
+    print("                         turn " + str(turn))
+    print("_______________________________________________________________________________")
     for player in minimax.players:
         number_player = minimax.number_of_player(player) + 1
         hand = ''
@@ -78,12 +109,10 @@ while not minimax.is_end():
         if card_5 == -1:
             card_5 = 0
         cards = [card_1, card_2, card_3, card_4, card_5]
-        print("Player " + str(number_player) + "plays card " + str(cards[number_player - 1]))
+        print("Player " + str(number_player) + " plays card " + str(cards[number_player - 1]))
         minimax.play(player, cards[number_player - 1])
-    max_hearts, max_diamonds, max_clubs, max_spades = minimax.get_max_card_each_suit()
-    minimax.put_won_cards_in_its_place(max_hearts, max_diamonds, max_clubs, max_clubs)
 
-#points, position_card = minimax.max_cosa(player1)
+# points, position_card = minimax.max_cosa(player1)
 
 
 elapsed_time = time.time() - start_time

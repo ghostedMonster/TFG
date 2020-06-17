@@ -127,7 +127,7 @@ def get_points(player):
             points += 1
         if strategy == 'MISERE' and card.rank.value <= 10:
             points += 1
-
+    player.score = points
     return points
 
 
@@ -135,6 +135,7 @@ class MiniMax(object):
     """
     Clase encargada de la inteligencia del ordenador a la hora de jugar cartas en el juego
     """
+
     def __init__(self, deck, players):
         self.deck = deck
         self.players = players
@@ -351,7 +352,6 @@ class MiniMax(object):
             self.undo(player, all_card)
         return max_cards, max_position
 
-
     def max_levels_prunning_v2(self, depth, alpha, beta, curr_player, first_player):
         end = self.is_end()
 
@@ -369,32 +369,33 @@ class MiniMax(object):
             self.put_won_cards_in_its_place(max_card_hearts, max_card_diamonds, max_card_clubs, max_card_spades)
 
         if end or depth == 0:
-            sum_points = 0
-            for player in self.players:
-                points = get_points(player)
-                sum_points += points
+            sum_points = get_points(first_player)
+
             return sum_points, -1
         used_card = -1
+
         for card in range(0, len(curr_player.hand)):
             all_card = curr_player.hand[card]
             self.play(curr_player, card)
 
             if number_curr_player == number_first_player:
-                alpha = max(alpha, self.max_levels_prunning_v2(depth - 1, alpha, beta,
-                                                               self.players[next_number_of_player], first_player)[0])
+
+                next_value = self.max_levels_prunning_v2(depth - 1, alpha, beta,
+                                                         self.players[next_number_of_player], first_player)
                 self.undo(curr_player, all_card)
-                if beta <= alpha:
+                if next_value[0] >= beta:
                     break
-                else:
-                    used_card = card
+                alpha = max(alpha, next_value[0])
+                used_card = card
             else:
-                beta = min(beta, self.max_levels_prunning_v2(depth - 1, alpha, beta,
-                                                             self.players[next_number_of_player], first_player)[0])
+                best_val = 1000
+                next_value = self.max_levels_prunning_v2(depth - 1, alpha, beta,
+                                                         self.players[next_number_of_player], first_player)
                 self.undo(curr_player, all_card)
-                if beta <= alpha:
+                if next_value[0] <= alpha:
                     break
-                else:
-                    used_card = card
+                beta = min(beta, next_value[0])
+                used_card = card
         if number_first_player == number_curr_player:
             return alpha, used_card
         else:
@@ -434,7 +435,7 @@ class MiniMax(object):
             sum_points = 0
             for point in points:
                 sum_points += point
-#            if points[number_player] <= max_cards[number_player]:
+            #            if points[number_player] <= max_cards[number_player]:
 
             if sum_max_points > sum_points:
                 break
