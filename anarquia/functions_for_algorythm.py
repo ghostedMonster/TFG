@@ -352,6 +352,21 @@ class MiniMax(object):
             self.undo(player, all_card)
         return max_cards, max_position
 
+    def evaluacion(self, player):
+        suits = [Suit.CLUBS, Suit.DIAMONDS.name, Suit.HEARTS.name, Suit.SPADES.name]
+        sum_player = 0
+        sum_other = 0
+
+        for jugador in self.players:
+            cards_player = jugador.won_hand + jugador.hand
+            if jugador == player:
+                sum_player += get_points(jugador)
+            else:
+                sum_other += get_points(jugador)
+
+        res = sum_player - (sum_other / 4)
+        return res
+
     def max_levels_prunning_v2(self, depth, alpha, beta, curr_player, first_player):
         end = self.is_end()
 
@@ -370,7 +385,7 @@ class MiniMax(object):
 
         if end or depth == 0:
             sum_points = get_points(first_player)
-
+            #sum_points = self.evaluacion(first_player)
             return sum_points, -1
         used_card = -1
 
@@ -386,7 +401,8 @@ class MiniMax(object):
                 if next_value[0] >= beta:
                     break
                 alpha = max(alpha, next_value[0])
-                used_card = card
+                if alpha == next_value[0]:
+                    used_card = card
             else:
                 best_val = 1000
                 next_value = self.max_levels_prunning_v2(depth - 1, alpha, beta,
@@ -395,7 +411,8 @@ class MiniMax(object):
                 if next_value[0] <= alpha:
                     break
                 beta = min(beta, next_value[0])
-                used_card = card
+                if beta == next_value[0]:
+                    used_card = card
         if number_first_player == number_curr_player:
             return alpha, used_card
         else:
