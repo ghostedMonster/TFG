@@ -153,7 +153,7 @@ class ImageButton(ButtonBehavior, Image):
                 animation_4.start(carta_player4)
                 animation_5.start(carta_player5)
 
-                next_button = Button(text='Next turn', pos=(0, child.size[1] * 0.2), size_hint=(1, 0.05),
+                next_button = Button(text='Next turn', pos=(0, child.size[1] * 0.5), size_hint=(1, 0.05),
                                      on_release=screen.next_round)
                 child.add_widget(next_button)
 
